@@ -1,0 +1,28 @@
+schema_version: "0.1"
+benchmark_id: "runmismatch-v0.1"
+status: "collecting"
+
+selection:
+  target_cases: 15
+  build_gate:
+    min_correct_detectable: 8
+    max_false_positives: 1
+
+categories:
+  runtime_compatibility: 4
+  environment_variables: 3
+  ports: 3
+  tool_presence: 2
+  ambiguous_or_unknown: 2
+  mixed_configuration: 1
+
+principles:
+  - real_cases
+  - public_provenance
+  - pinned_commits
+  - explicit_detectability
+  - false_positive_control
+  - secret_free_environment_data
+  - reproducible_evaluation
+
+cases: []
