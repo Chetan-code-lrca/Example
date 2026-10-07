@@ -4,7 +4,7 @@
 
 **Protocol status:** Pre-data-collection.  
 **Protocol date:** 2026-10-07.  
-**Protocol version:** 1.3.  
+**Protocol version:** 1.4.  
 **Time-box:** 7 calendar days from protocol commit.  
 **Random seed:** 20261007.
 
@@ -1179,3 +1179,64 @@ conflict_subtype
 **[OPINION]** No further protocol amendments will be made before Day 1 other than clerical fixes that do not change eligibility, sampling, declaration parsing, scope assignment, conflict classification, harm criteria, tool detection, thresholds, sensitivity analyses, or decision rules.
 
 **[OPINION]** Any substantive change proposed after this point must be recorded as a protocol deviation and excluded from the primary analysis.
+
+---
+
+# Version 1.4 amendment — pre-data
+
+**Protocol version:** 1.4  
+**Amendment date:** 2026-10-07  
+**Status:** Pre-data; no repository from the study has been inspected.
+
+## A29. Sampling termination is based only on exposure
+
+**[OPINION]** The phrase STOP must not be used for an early sampling decision based on observed conflicts.
+
+Sampling continues until the first of:
+
+```text
+N_multi = 400
+N_all = 1000
+seven-calendar-day time-box expires
+```
+
+**[OPINION]** During sampling, do not stop because `C`, `D_owner`, `M`, `P_all`, `P_multi`, `ToolCoverage`, or any conflict subtype is high or low.
+
+**[OPINION]** After sampling has terminated, the final STOP/BUILD/PIVOT decision may use the pre-registered outcome metrics in A24. This is a product decision, not a sampling-stop rule.
+
+## A30. Deterministic candidate selection
+
+**[OPINION]** Candidate pools are frozen before the first repository is inspected. Each repository is represented by canonical `owner/name` and candidates are sorted lexicographically by that value before selection.
+
+**[OPINION]** Sampling uses eight logical strata: JavaScript/TypeScript × four star bands and Python × four star bands. Within each language, strata are visited in ascending star-band order; the two languages alternate on each cycle. If a stratum is exhausted, it is skipped. This order is independent of declarations and conflict labels.
+
+**[OPINION]** For each stratum, derive a deterministic 32-bit seed as:
+
+```text
+seed_stratum = first 4 bytes of SHA-256(
+    f"{20261007}:{language}:{stratum_id}"
+) interpreted as an unsigned big-endian integer
+```
+
+Use `random.Random(seed_stratum)` and `Random.sample` without replacement within each frozen stratum candidate list.
+
+**[OPINION]** Record the candidate-list hash, stratum id, seed, candidate count, selected owner/names, and selection timestamp.
+
+## A31. Sampling environment gate
+
+**[OPINION]** Before candidate selection, record:
+
+```text
+python --version
+python3 --version
+python executable path
+seed = 20261007
+```
+
+**[OPINION]** The declared Python version is not considered verified until the operator records the local command output. A different local version requires a pre-data amendment before sampling begins.
+
+## A32. v1.4 freeze
+
+**[OPINION]** v1.4 is now the operative pre-data protocol. After the first sampled repository is inspected, no substantive change to eligibility, pool construction, candidate selection, sampling termination, declaration extraction, scope assignment, conflict classification, sensitivity analysis, harm criteria, tool coverage, thresholds, or decision rules is permitted for the primary analysis.
+
+**[OPINION]** Any substantive post-start change must be recorded in `deviations.md` and excluded from the primary analysis.
