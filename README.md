@@ -1,93 +1,78 @@
-# RunMismatch Benchmark
+# RunMismatch
 
-**A public benchmark for one question: why doesn't this repository run on my machine?**
+RunMismatch is a dataset-first research project investigating whether public GitHub repositories contain actionable conflicts between their own Node.js/Python runtime declarations, whether those conflicts are already detected by existing tools, and whether the problem is broad enough to justify a deterministic diagnostic CLI. The project deliberately freezes its preregistered study protocol before data collection and does not add extraction or analysis code until the validation decision has been made.
 
-RunMismatch is being built as a dataset-first project.
+## Research question
 
-It records real repository failures, their confirmed root causes, the evidence available from the repository and machine, and whether a deterministic diagnostic can identify the problem without guessing.
+> How prevalent are actionable conflicts among repository-declared Node.js/Python runtime configurations in active public GitHub repositories, and how often are those conflicts already detected by existing tools?
 
-> **Status: pre-v0.1 validation.**
->
-> The benchmark is intentionally small and evidence-driven before any reference CLI is built.
+## Protocol
 
-## Why this exists
+The frozen protocol is copied byte-for-byte to [`protocol/PREREGISTRATION.md`](protocol/PREREGISTRATION.md).
 
-Environment-management tools help prevent drift. RunMismatch is for the cases where you already have a repository and need to understand why it does not run on the current machine.
+**Timestamp anchor:** [Example commit 20ec39e40ed8b8a73a34c965c65468e685b0d9bf](https://github.com/Chetan-code-lrca/Example/commit/20ec39e40ed8b8a73a34c965c65468e685b0d9bf)
 
-The benchmark is designed to measure both **detection** and **silence**:
+## STOP / PIVOT / BUILD
 
-- Can the tool detect a real, reproducible mismatch?
-- Does it avoid reporting compatible configurations as failures?
-- Can it honestly say **unknown** when the repository does not contain enough evidence?
+The following decision rules are copied from the operative v1.3 protocol without rewording:
 
-## Current validation gate
+### STOP
 
-No reference CLI is being implemented yet.
-
-The current pre-data study is a static prevalence study of repository-declared Node.js/Python runtime conflicts. The operative protocol is recorded in [PREREGISTRATION.md](PREREGISTRATION.md).
-
-The study will only move to CLI implementation if the preregistered BUILD gate is satisfied after the frozen sample is collected. The earlier 15-case benchmark gate is retained only as historical planning.
-
-## Dataset principles
-
-1. **Real cases over synthetic failures.**
-2. **Source provenance for every case.**
-3. **Pinned repository commit whenever possible.**
-4. **Root cause must be evidence-backed.**
-5. **Non-detectable cases stay in the benchmark.**
-6. **False positives are treated as a first-class failure.**
-7. **Environment secrets are never collected.**
-8. **The benchmark evaluator is deterministic and reproducible.**
-
-## Planned structure
-
-```
-benchmark/          # historical/future failure corpus
-fixtures/           # generated local parser fixtures
-tools/              # deterministic declaration extractor + tests
-rules/              # declarative diagnostic rules
-schema/             # machine-readable schemas
+```text
+N_multi_final < 150
+OR
+P_multi < 2%
 ```
 
-## Current study scope
+### BUILD
 
-The validated extraction wedge is narrower:
+```text
+N_multi_final >= 150
+AND
+P_multi >= 5%
+AND
+D_owner >= 5
+AND
+M >= 2
+AND
+ToolCoverage < 50%
+```
 
-- Node.js and Python runtime declarations
-- comparable execution scopes
-- semver / Python range normalization
-- explicit CI matrix treatment
-- conservative UNKNOWN handling
-- cross-declaration conflict classification
+### PIVOT
 
-Environment variables, ports, dependency resolution, Docker/system-library diagnosis, and automatic fixes are outside the current prevalence study.
+PIVOT to the measurement study plus small static linter in every remaining case.
 
-## Contribution test
+STOP, BUILD, and PIVOT are exhaustive and non-overlapping because STOP is evaluated first, BUILD second, and PIVOT is the complement.
 
-A stranger should be able to contribute a benchmark case in about 10 minutes:
+## Protocol freeze
 
-1. Find a real failure with a public source.
-2. Pin the repository and failure evidence.
-3. Describe the root cause.
-4. Mark what is and is not detectable from repository + machine evidence.
-5. Add the case YAML.
-6. Run schema validation.
+No protocol changes are allowed after Day 1. The frozen v1.3 protocol permits only clerical fixes before Day 1 that do not change eligibility, sampling, declaration parsing, scope assignment, conflict classification, harm criteria, tool detection, thresholds, sensitivity analyses, or decision rules. Any substantive later change must be recorded as a protocol deviation and excluded from the primary analysis.
+
+## Current status
+
+- Pre-data collection.
+- No extraction implementation.
+- No analysis implementation.
+- No sampled-repository cases have been added.
+- The v1.3 protocol is frozen.
+
+## Repository structure
+
+```text
+data/
+analysis/
+protocol/
+  PREREGISTRATION.md
+  deviations.md
+tests/
+  fixtures/
+src/
+```
+
+## Tools used
+
+AI assistants helped draft the preregistration protocol. The protocol's substantive rules are frozen before data collection; AI assistance does not substitute for the preregistered evidence and verification process.
 
 ## License
 
-Dataset and code licensing will be finalized before the first public benchmark release.
-
-## Project status
-
-This repository is currently a staging repository. The GitHub repository name will be changed to the final project name before the first public release.
-
-
-## Fixture tests
-
-The repository includes a fixture-only extractor test runner. It generates the control/conflict fixtures locally and does not inspect sampled GitHub repositories.
-
-Run:
-
-```
-python tools/test_fixtures.py
-```
+MIT.
