@@ -2,18 +2,11 @@
 
 This directory contains the versioned public "why doesn't it run?" corpus.
 
-## Frozen benchmark policy
+## Current study policy
 
-The first release will contain 15 cases selected before evaluating the reference implementation.
+The older 15-case benchmark plan is historical. The current pre-data work is the static prevalence study described in [PREREGISTRATION.md](../PREREGISTRATION.md).
 
-The selection must deliberately include:
-
-- genuine detectable failures;
-- compatible configurations where the correct result is silence;
-- unresolved/non-detectable failures;
-- mixed or conflicting declarations.
-
-The benchmark must not be optimized after seeing implementation results.
+No sampled repository is used to tune the extractor before the study starts. Fixture-only cases are generated and tested independently.
 
 ## Case requirements
 
@@ -54,4 +47,4 @@ The evaluator will report:
 - non-detectable cases;
 - ambiguous cases.
 
-The v0.1 build gate is **at least 8 correctly diagnosed detectable cases and at most 1 false positive** on the frozen 15-case set.
+The current CLI BUILD gate is the preregistered prevalence decision in [PREREGISTRATION.md](../PREREGISTRATION.md). The old 15-case gate is retained only as historical context.
