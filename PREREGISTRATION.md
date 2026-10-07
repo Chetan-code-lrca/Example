@@ -4,7 +4,7 @@
 
 **Protocol status:** Pre-data-collection.  
 **Protocol date:** 2026-10-07.  
-**Protocol version:** 1.0.  
+**Protocol version:** 1.2.  
 **Time-box:** 7 calendar days from protocol commit.  
 **Random seed:** 20261007.
 
@@ -878,3 +878,93 @@ protocol deviations
 **[OPINION]** v1.1 is frozen before data collection. After the first repository is inspected, no primary eligibility, sampling, classification, harm, tool-detection, or decision criterion may be changed.
 
 **[OPINION]** Any substantive later change must be recorded as a protocol deviation and excluded from the primary analysis.
+
+---
+
+# Version 1.2 amendment — pre-data
+
+**Protocol version:** 1.2  
+**Amendment date:** 2026-10-07  
+**Status:** Pre-data; no repository from the study has been inspected.
+
+## A16. Operative version and precedence
+
+**[OPINION]** This v1.2 amendment supersedes the earlier v1.0/v1.1 sampling and decision wording wherever it conflicts with the rules below. Earlier text is retained as historical protocol record.
+
+**[OPINION]** The top-level metadata is now explicitly **Protocol version 1.2**. The v1.1 amendment remains part of the audit trail.
+
+## A17. Sampling stop rule is independent of conflict counts
+
+**[OPINION]** Sampling termination must not depend on `C`, `D`, `P_all`, `P_multi`, or any tool-coverage result.
+
+```text
+minimum comparable exposure: N_multi >= 150
+target comparable exposure:  N_multi = 400
+hard repository cap:         N_all <= 1000
+hard time-box:                7 calendar days
+```
+
+**[OPINION]** Continue sampling until the first of:
+
+1. `N_multi = 400`;
+2. `N_all = 1000`;
+3. the seven-calendar-day time-box expires.
+
+**[OPINION]** The sample may pass `N_multi = 150` without stopping. No early stop is permitted because prevalence, conflict count, distinct-conflict count, or tool coverage looks high or low.
+
+**[FACT]** The target `N_multi = 400` makes the boundary combination `P_multi = 5%` and `D = 20` attainable without making a sampling stop depend on observed conflict counts.
+
+**[OPINION]** After sampling terminates, compute the pre-registered outcomes and apply STOP, BUILD, or PIVOT. Those outcome calculations may use conflict counts; the sampling termination rule may not.
+
+## A18. CI-matrix conflict subtype and sensitivity analysis
+
+**[OPINION]** Add the subtype `CI_ENGINE_CONFLICT` for a conflict caused by comparing a project/package engine constraint with a GitHub Actions matrix leg in the same execution scope.
+
+**[OPINION]** The primary analysis includes qualifying `CI_ENGINE_CONFLICT` observations under the A7 rules.
+
+**[OPINION]** Pre-register a secondary sensitivity analysis that excludes all `CI_ENGINE_CONFLICT` observations from the conflict numerator while keeping repository eligibility and `N_multi` fixed.
+
+Report both:
+
+```text
+P_multi_primary = C_primary / N_multi
+P_multi_no_ci_engine = C_without_CI_ENGINE_CONFLICT / N_multi
+```
+
+Also report the corresponding distinct-repository counts `D_primary` and `D_no_ci_engine`.
+
+**[OPINION]** The sensitivity result is descriptive and does not replace the primary BUILD gate.
+
+## A19. Sampling interpreter verification
+
+**[OPINION]** The previously written `Python 3.12.15` entry is a planned interpreter pin, not proof of the operator's local interpreter.
+
+Before candidate-pool freeze, the operator must run:
+
+```text
+python --version
+python3 --version
+```
+
+Record the exact output used by the sampling script.
+
+**[OPINION]** If the actual interpreter is not Python 3.12.15, no repository sampling may begin until a new pre-data amendment records the actual interpreter version and keeps the same `random.Random` / Mersenne-Twister / `Random.sample` method.
+
+**[OPINION]** The sampling script must fail closed when the required interpreter pin is not satisfied, so an accidental different interpreter cannot silently change the sample.
+
+## A20. Pre-data freeze check
+
+Before the first sampled repository is inspected, verify all of the following:
+
+```text
+Protocol version is 1.2
+Python interpreter version is recorded and pinned
+seed is 20261007
+seed-derivation method is committed
+candidate-pool query strings are recorded
+GitHub pool timestamps are recorded
+CI_ENGINE_CONFLICT sensitivity rule is frozen
+fixture-only extractor tests are passing
+```
+
+**[OPINION]** After this checklist is satisfied, the study enters the same no-primary-changes freeze described in the earlier protocol sections.
