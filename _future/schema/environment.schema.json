@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/runmismatch/environment.schema.json",
+  "title": "RunMismatch Redacted Environment Snapshot",
+  "type": "object",
+  "required": ["spec_version", "platform", "tools", "environment_variables", "ports"],
+  "properties": {
+    "spec_version": {"type": "string"},
+    "platform": {"type": "object", "required": ["os", "architecture"], "properties": {"os": {"type": "string"}, "architecture": {"type": "string"}}, "additionalProperties": false},
+    "tools": {"type": "object", "additionalProperties": {"type": "object", "required": ["present"], "properties": {"present": {"type": "boolean"}, "version": {"type": "string"}}, "additionalProperties": false}},
+    "environment_variables": {"type": "object", "additionalProperties": {"type": "object", "required": ["present"], "properties": {"present": {"type": "boolean"}}, "additionalProperties": false}},
+    "ports": {"type": "array", "items": {"type": "object", "required": ["port", "protocol", "state"], "properties": {"port": {"type": "integer", "minimum": 1, "maximum": 65535}, "protocol": {"enum": ["tcp", "udp"]}, "state": {"enum": ["listening", "free", "unknown"]}}, "additionalProperties": false}}
+  },
+  "additionalProperties": false
+}
