@@ -622,7 +622,7 @@ protocol/
 
 STOP the standalone CLI if either:
 
-`
+```
 N_multi < 150
 AND
 the 1000-repository cap or seven-day time-box was reached
@@ -632,13 +632,13 @@ OR
 N_multi >= 150
 AND
 P_multi < 2%
-`
+```
 
 ### BUILD
 
 BUILD the CLI prototype only if all are true:
 
-`
+```
 N_multi >= 150
 AND
 P_multi >= 5%
@@ -646,7 +646,7 @@ AND
 D >= 20
 AND
 ToolCoverage < 50%
-`
+```
 
 ### PIVOT
 
@@ -681,12 +681,12 @@ For each language:
 **[FACT]** GitHub documents `pushed` as the qualifier for repositories updated by a push after a specified date. citeturn0search1
 
 **[OPINION]** Eligibility requires:
-`
+```
 public
 fork:false
 archived:false
 pushed_at >= pool_freeze_date - 12 months
-`
+```
 
 Record the exact `pushed_at` value returned at pool freeze.
 
@@ -707,7 +707,7 @@ Examples:
 **[OPINION]** A GitHub Actions matrix creates separate CI execution scopes.
 
 Example:
-`
+```
 strategy:
   matrix:
     node: [18, 20, 22]
@@ -715,7 +715,7 @@ steps:
   - uses: actions/setup-node
     with:
       node-version: ${{ matrix.node }}
-`
+```
 
 This is three CI runtime selections, not a single declaration.
 
@@ -733,13 +733,13 @@ Rules:
 
 **[OPINION]** Add `OwnMachineFailureCoverage`:
 
-`
+```
 conflicting repositories where an applicable tool surfaces
 the same conflict as an error/failure in the project's own
 machine context
 /
 tested conflicting repositories
-`
+```
 
 **[OPINION]** A failure means a non-success exit status or explicitly documented error/failure result identifying the relevant runtime incompatibility. A warning alone does not count.
 
@@ -754,13 +754,13 @@ Report both:
 **[FACT]** Python's `random.Random` uses Mersenne Twister, and `random.sample` samples without replacement. citeturn0search4turn0search6
 
 **[OPINION]** Primary sampling environment:
-`
+```
 Python 3.12.15
 stdlib random.Random
 PRNG core: MT19937 / Mersenne Twister
 seed: 20261007
 sampling: Random.sample(population, k)
-`
+```
 
 Sort candidates by canonical `owner/name` before sampling. Record the exact interpreter version. Use one documented deterministic seed-derivation method for strata and commit it before sampling.
 
@@ -773,12 +773,12 @@ The second rater independently records declarations, comparable scope, `N_multi`
 The primary rater's labels remain hidden until the independent record is complete.
 
 Report agreement separately for:
-`
+```
 N_multi eligibility
 conflict classification
 harm classification
 tool detection
-`
+```
 
 Disagreements are documented and adjudicated using the frozen definitions.
 
@@ -813,7 +813,7 @@ The existing 24-month harm-search window remains unchanged.
 **[FACT]** v1.0 contained malformed backticks in the expected-deliverable block.
 
 **[OPINION]** The corrected block is:
-`
+```
 data/
   repositories.csv
   declarations.csv
@@ -829,10 +829,10 @@ analysis/
 protocol/
   PREREGISTRATION.md
   deviations.md
-`
+```
 
 The final report must state:
-`
+```
 N_all
 N_multi
 C
@@ -845,7 +845,7 @@ ToolCoverage
 OwnMachineFailureCoverage
 final STOP/PIVOT/BUILD result
 protocol deviations
-`
+```
 
 ## A14. Diff-style changelog
 
@@ -871,7 +871,7 @@ protocol deviations
 + require harm evidence to concern the same runtime family and scope
 + repair Section 16 backticks
 + mark cross-file detection claims UNVERIFIED until empirically tested
-`
+```
 
 ## A15. Amendment freeze
 
