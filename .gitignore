@@ -20,8 +20,8 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .npm/
- .yarn/
- .pnpm-store/
+.yarn/
+.pnpm-store/
 
 # Environment / secrets
 .env
