@@ -67,7 +67,8 @@
         "rule": {"type": "string"},
         "result": {"enum": ["pass", "fail", "unknown"]},
         "reason": {"type": "string"}
-      }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false
