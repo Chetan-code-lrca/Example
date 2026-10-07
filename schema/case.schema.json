@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/runmismatch/case.schema.json",
+  "title": "RunMismatch Benchmark Case",
+  "type": "object",
+  "required": ["id", "repository", "failure", "root_cause", "detectability", "expected_diagnosis"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^WRB-[0-9]{4}$"
+    },
+    "repository": {
+      "type": "object",
+      "required": ["url", "commit"],
+      "properties": {
+        "url": {"type": "string", "format": "uri"},
+        "commit": {"type": "string", "minLength": 7},
+        "language": {"type": "string"},
+        "framework": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "failure": {
+      "type": "object",
+      "required": ["category", "symptom", "source"],
+      "properties": {
+        "category": {"type": "string"},
+        "symptom": {"type": "string"},
+        "error_excerpt": {"type": "string"},
+        "source": {
+          "type": "object",
+          "required": ["type", "url"],
+          "properties": {
+            "type": {"type": "string"},
+            "url": {"type": "string", "format": "uri"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "root_cause": {
+      "type": "object",
+      "required": ["description", "confidence"],
+      "properties": {
+        "description": {"type": "string"},
+        "confidence": {"enum": ["confirmed", "reproduced", "maintainer-confirmed", "inferred"]}
+      },
+      "additionalProperties": false
+    },
+    "detectability": {
+      "type": "object",
+      "required": ["repo_evidence", "machine_evidence", "deterministic", "detectable"],
+      "properties": {
+        "repo_evidence": {"type": "boolean"},
+        "machine_evidence": {"type": "boolean"},
+        "deterministic": {"type": "boolean"},
+        "detectable": {"type": "boolean"},
+        "reason_if_not_detectable": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "expected_diagnosis": {
+      "type": "object",
+      "required": ["result"],
+      "properties": {
+        "rule": {"type": "string"},
+        "result": {"enum": ["pass", "fail", "unknown"]},
+        "reason": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
