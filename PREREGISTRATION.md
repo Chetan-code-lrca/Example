@@ -4,7 +4,7 @@
 
 **Protocol status:** Pre-data-collection.  
 **Protocol date:** 2026-10-07.  
-**Protocol version:** 1.2.  
+**Protocol version:** 1.3.  
 **Time-box:** 7 calendar days from protocol commit.  
 **Random seed:** 20261007.
 
