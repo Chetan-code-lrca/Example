@@ -968,3 +968,214 @@ fixture-only extractor tests are passing
 ```
 
 **[OPINION]** After this checklist is satisfied, the study enters the same no-primary-changes freeze described in the earlier protocol sections.
+
+---
+
+# Version 1.3 amendment — pre-data
+
+**Protocol version:** 1.3  
+**Amendment date:** 2026-10-07  
+**Status:** Pre-data; no repository from the study has been inspected.
+
+## A21. Operative version and precedence
+
+**[OPINION]** This v1.3 amendment supersedes earlier v1.0/v1.1/v1.2 wording wherever it conflicts with the rules below. Earlier text remains as historical protocol record.
+
+**[FACT]** GitHub distinguishes repositories owned by personal accounts from repositories owned by organizations; repositories can be owned individually or by an organization. citeturn0search1turn0search2
+
+**[OPINION]** For this study, the repository owner is the canonical GitHub owner namespace in owner/repository: the personal-account username or organization login. Collaborators, code owners, and individual organization members do not count as separate repository owners.
+
+## A22. Replace D with owner diversity
+
+**[FACT]** In v1.0-v1.2, C and D both counted sampled repositories containing at least one actionable conflict. Therefore D >= 20 duplicated C.
+
+**[OPINION]** v1.3 retires D as the BUILD metric and defines:
+
+D_owner = number of distinct GitHub repository owners with at least one sampled repository containing an actionable conflict.
+
+A single owner with multiple conflicting repositories contributes 1 to D_owner.
+
+**[OPINION]** Set D_owner >= 5 for BUILD.
+
+**[OPINION]** Justification: the existing BUILD gate requires at least 20 conflicting repositories at the 5% prevalence boundary. Requiring 5 distinct owners prevents the result from being concentrated entirely in one or two ownership namespaces. Five is a minimum replication threshold, not a statistical-significance claim; a threshold of 10 would make this small, capped study substantially more sensitive to the arbitrary owner composition of the sample.
+
+## A23. Declaration-pair mechanism diversity
+
+**[OPINION]** BUILD also requires conflicts to span at least 2 distinct declaration-pair types.
+
+A declaration-pair type is the unordered pair of normalized declaration classes that produced the conflict.
+
+| Class | Authoritative sources |
+|---|---|
+| PROJECT_CONSTRAINT | package.json engines/devEngines; Python requires-python |
+| LOCAL_SELECTOR | .nvmrc, .node-version, .python-version, .tool-versions, mise.toml |
+| CI_SELECTOR | GitHub Actions setup-node/setup-python version declarations |
+| CONTAINER_BASE | Dockerfile FROM node/python declarations |
+| TEST_ENV_SELECTOR | tox envlist/basepython |
+| DEPLOYMENT_SELECTOR | Heroku runtime.txt in Heroku deployment scope |
+
+Canonical pair types include:
+
+- PROJECT_CONSTRAINT + LOCAL_SELECTOR
+- PROJECT_CONSTRAINT + CI_SELECTOR
+- PROJECT_CONSTRAINT + CONTAINER_BASE
+- LOCAL_SELECTOR + CI_SELECTOR
+- LOCAL_SELECTOR + CONTAINER_BASE
+- CI_SELECTOR + CONTAINER_BASE
+- TEST_ENV_SELECTOR + PROJECT_CONSTRAINT
+- DEPLOYMENT_SELECTOR + PROJECT_CONSTRAINT
+
+The pair is unordered, so reversed order is the same type.
+
+**[OPINION]** Let M be the number of distinct declaration-pair types represented among actionable conflicts. BUILD requires M >= 2.
+
+**[OPINION]** Justification: two mechanism types are the minimum useful diversity threshold. One type could indicate a problem confined to one integration pattern; requiring two shows that the phenomenon is not confined to a single declaration mechanism without requiring broad coverage of every possible pair type.
+
+## A24. Revised exhaustive STOP / BUILD / PIVOT rules
+
+Let:
+
+- N_multi = sampled repositories with at least two comparable authoritative declarations for one runtime family/scope.
+- C = sampled repositories containing at least one actionable conflict.
+- P_multi = C / N_multi.
+- D_owner = distinct GitHub repository owners with at least one conflicting sampled repository.
+- M = distinct declaration-pair mechanism types among actionable conflicts.
+- ToolCoverage = existing-tool coverage defined in A8.
+- N_multi_final = N_multi at sampling termination.
+
+### STOP
+
+STOP the standalone CLI if:
+
+```text
+N_multi_final < 150
+OR
+P_multi < 2%
+```
+
+**[OPINION]** Because sampling targets N_multi = 400, N_multi_final < 150 can occur only when the repository cap or seven-day time-box prevents reaching the minimum comparable exposure.
+
+### BUILD
+
+BUILD the CLI prototype only if all are true:
+
+```text
+N_multi_final >= 150
+AND
+P_multi >= 5%
+AND
+D_owner >= 5
+AND
+M >= 2
+AND
+ToolCoverage < 50%
+```
+
+**[OPINION]** Prevalence remains the primary problem-size threshold; D_owner adds ownership-level replication; M adds mechanism-level replication; ToolCoverage tests whether existing tools already cover the problem.
+
+### PIVOT
+
+PIVOT to the measurement study plus small static linter in every remaining case.
+
+**[OPINION]** STOP, BUILD, and PIVOT are exhaustive and non-overlapping because STOP is evaluated first, BUILD second, and PIVOT is the complement.
+
+## A25. Updated sensitivity analyses
+
+**[OPINION]** The existing CI-engine sensitivity analysis remains, with owner and mechanism diversity added.
+
+Report:
+
+```text
+P_multi_primary = C_primary / N_multi
+P_multi_no_ci_engine = C_without_CI_ENGINE_CONFLICT / N_multi
+
+D_owner_primary
+D_owner_no_ci_engine
+
+M_primary
+M_no_ci_engine
+```
+
+D_owner_no_ci_engine counts distinct owners having at least one remaining non-CI-engine conflict.
+
+M_no_ci_engine counts distinct declaration-pair types represented after excluding CI_ENGINE_CONFLICT observations.
+
+Also report whether the BUILD gate remains satisfied after CI-engine exclusion:
+
+```text
+N_multi >= 150
+AND P_multi_no_ci_engine >= 5%
+AND D_owner_no_ci_engine >= 5
+AND M_no_ci_engine >= 2
+AND ToolCoverage_no_ci_engine < 50%
+```
+
+The primary BUILD decision remains based on the primary analysis.
+
+## A26. Updated final-report fields
+
+The final report must state:
+
+```text
+N_all
+N_multi
+C
+D_owner
+P_all
+P_multi
+95% Wilson intervals
+mechanism_count M
+mechanism_types
+harm proportion H
+ToolCoverage
+OwnMachineFailureCoverage
+CI_ENGINE_CONFLICT count
+P_multi_no_ci_engine
+D_owner_no_ci_engine
+M_no_ci_engine
+BUILD_gate_primary
+BUILD_gate_no_ci_engine
+final STOP/PIVOT/BUILD result
+protocol deviations
+```
+
+Conflict records must additionally contain:
+
+```text
+repository_owner
+declaration_class_A
+declaration_class_B
+declaration_pair_type
+conflict_subtype
+```
+
+## A27. v1.3 changelog
+
+**[FACT]** v1.3 is a pre-data amendment.
+
+```diff
+- D = number of distinct conflicting repositories
++ D_owner = number of distinct GitHub repository owners with >=1 conflicting repository
+
+- BUILD required D >= 20
++ BUILD requires D_owner >= 5
+
++ define canonical declaration classes
++ define unordered declaration-pair mechanism types
++ BUILD requires M >= 2 distinct mechanism types
++ justify D_owner >= 5 as minimum ownership-level replication
++ justify M >= 2 as minimum mechanism-level replication
++ remove D from operative BUILD logic
++ recompute exhaustive STOP / BUILD / PIVOT rules
++ extend CI-engine sensitivity analysis with D_owner and M
++ add owner and mechanism fields to final report
++ add declaration-class and pair-type fields to conflict records
+```
+
+## A28. Final pre-Day-1 amendment freeze
+
+**[OPINION]** v1.3 is the final substantive protocol amendment.
+
+**[OPINION]** No further protocol amendments will be made before Day 1 other than clerical fixes that do not change eligibility, sampling, declaration parsing, scope assignment, conflict classification, harm criteria, tool detection, thresholds, sensitivity analyses, or decision rules.
+
+**[OPINION]** Any substantive change proposed after this point must be recorded as a protocol deviation and excluded from the primary analysis.
