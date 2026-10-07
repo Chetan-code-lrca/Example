@@ -1,12 +1,10 @@
 schema_version: "0.1"
 benchmark_id: "runmismatch-v0.1"
-status: "collecting"
+status: "pre-data-validation"
 
 selection:
-  target_cases: 15
-  build_gate:
-    min_correct_detectable: 8
-    max_false_positives: 1
+  status: "replaced-by-static-prevalence-study"
+  protocol: "../PREREGISTRATION.md"
 
 categories:
   runtime_compatibility: 4
@@ -26,3 +24,6 @@ principles:
   - reproducible_evaluation
 
 cases: []
+
+notes:
+  - "Do not collect sampled-repository cases until the preregistered study is frozen."
