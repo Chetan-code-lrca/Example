@@ -76,3 +76,14 @@ AI assistants helped draft the preregistration protocol. The protocol's substant
 ## License
 
 MIT.
+
+## Historical implementation note
+
+Earlier extraction/fixture scaffolding existed in this repository's history before being removed so that the pre-data v1.3 study would not be coupled to an implementation. The removal history is preserved in Git:
+
+- 0dc586a0943e99abe5aedc2ad7d1603a3ddfc721 — removed tools/extract_declarations.py.
+- 0c4e96f281d62f8fd3873348c21e78e300784737 — removed tools/test_fixtures.py.
+- a5915985fd2a82cfaf69b084cfce8840c15ab163 — removed requirements-dev.txt.
+- a2f18db4666af2546c171f3f4edbaf4ade8903d0 — removed the remaining pre-protocol implementation scaffolding.
+
+No replacement extraction or analysis code is being added before the preregistered v1.3 study is completed.
