@@ -20,16 +20,13 @@ The benchmark is designed to measure both **detection** and **silence**:
 - Does it avoid reporting compatible configurations as failures?
 - Can it honestly say **unknown** when the repository does not contain enough evidence?
 
-## v0.1 build gate
+## Current validation gate
 
-The first benchmark snapshot will contain 15 real-world cases.
+No reference CLI is being implemented yet.
 
-We will build the reference implementation only if it achieves, on the frozen 15-case set:
+The current pre-data study is a static prevalence study of repository-declared Node.js/Python runtime conflicts. The operative protocol is recorded in [PREREGISTRATION.md](PREREGISTRATION.md).
 
-- at least **8 correctly diagnosed detectable cases**
-- at most **1 false positive**
-
-We will publish precision, recall, false negatives, non-detectable cases, and ambiguous cases rather than a single accuracy number.
+The study will only move to CLI implementation if the preregistered BUILD gate is satisfied after the frozen sample is collected. The earlier 15-case benchmark gate is retained only as historical planning.
 
 ## Dataset principles
 
@@ -45,25 +42,25 @@ We will publish precision, recall, false negatives, non-detectable cases, and am
 ## Planned structure
 
 ```
-benchmark/
-  cases/          # real failure cases
-  environments/   # redacted machine snapshots
-rules/             # declarative diagnostic rules
-schema/            # machine-readable schemas
-evaluator/         # benchmark scoring
+benchmark/          # historical/future failure corpus
+fixtures/           # generated local parser fixtures
+tools/              # deterministic declaration extractor + tests
+rules/              # declarative diagnostic rules
+schema/             # machine-readable schemas
 ```
 
-## Current scope
+## Current study scope
 
-The initial wedge is deliberately narrow:
+The validated extraction wedge is narrower:
 
-- Node.js version/range declarations
-- Python version/range declarations
-- environment-variable presence
-- host/container port mapping and conflicts
-- declared runtime/tool presence
+- Node.js and Python runtime declarations
+- comparable execution scopes
+- semver / Python range normalization
+- explicit CI matrix treatment
+- conservative UNKNOWN handling
+- cross-declaration conflict classification
 
-No automatic environment modification is planned for v0.1.
+Environment variables, ports, dependency resolution, Docker/system-library diagnosis, and automatic fixes are outside the current prevalence study.
 
 ## Contribution test
 
@@ -83,3 +80,14 @@ Dataset and code licensing will be finalized before the first public benchmark r
 ## Project status
 
 This repository is currently a staging repository. The GitHub repository name will be changed to the final project name before the first public release.
+
+
+## Fixture tests
+
+The repository includes a fixture-only extractor test runner. It generates the control/conflict fixtures locally and does not inspect sampled GitHub repositories.
+
+Run:
+
+```
+python tools/test_fixtures.py
+```
