@@ -408,6 +408,15 @@ def parse_workflows(root: Path) -> list[Declaration]:
                 continue
             matrix = (job.get("strategy") or {}).get("matrix") or {}
             expected_failure = job.get("continue-on-error") is True
+            defaults = job.get("defaults") or {}
+            run_defaults = defaults.get("run") if isinstance(defaults, dict) else {}
+            working_dir = run_defaults.get("working-directory") if isinstance(run_defaults, dict) else None
+            if isinstance(working_dir, str) and working_dir and not working_dir.startswith("/") and "${" not in working_dir:
+                project_scope = "local:%s" % Path(working_dir).as_posix().strip(".")
+                if project_scope == "local:":
+                    project_scope = "local:."
+            else:
+                project_scope = "local:."
             steps = job.get("steps") or []
             if not isinstance(steps, list):
                 continue
@@ -447,7 +456,7 @@ def parse_workflows(root: Path) -> list[Declaration]:
                         subtype = "EXPECTED_FAILURE_LEG" if expected_failure else "CI_ENGINE_CONFLICT"
                         out.append(make_decl(root, path, family, "github-actions",
                                              "jobs.%s.steps[%d].with.%s" % (job_id, idx, key),
-                                             value, "local:.", leg_scope, "ci", subtype,
+                                             value, project_scope, leg_scope, "ci", subtype,
                                              selection_group="gha:%s:%s:%s" % (path, job_id, label)))
     return out
 
