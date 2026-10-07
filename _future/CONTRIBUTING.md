@@ -5,6 +5,7 @@ RunMismatch is dataset-first. A useful contribution is a well-evidenced failure 
 ## Before submitting
 
 A case should have:
+
 - a public source URL;
 - a pinned repository commit when possible;
 - a clear symptom;
@@ -15,13 +16,14 @@ A case should have:
 ## Never include secrets
 
 Do not commit:
+
 - API keys
 - passwords
 - tokens
 - private environment-variable values
 - private logs containing credentials
 
-For environment variables, record only whether a variable is present, missing, or unknown.
+For environment variables, record only whether a variable is **present**, **missing**, or **unknown**.
 
 ## Prefer difficult truth over convenient truth
 
@@ -33,8 +35,10 @@ Do not convert an unresolved failure into a deterministic rule merely to make th
 
 Use the next available ID:
 
+```
 WRB-0001
 WRB-0002
 ...
+```
 
 The evaluator will eventually enforce uniqueness and schema validity.
