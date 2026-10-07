@@ -1,0 +1,9 @@
+{
+  "id": "F13",
+  "files": [
+    "tests/fixtures/F13/.nvmrc",
+    "tests/fixtures/F13/packages/web/package.json"
+  ],
+  "expected": "AMBIGUOUS",
+  "note": "A7 says root and child declarations are comparable only when repository semantics establish the same execution scope; if inheritance cannot be established without unsupported inference, classify the relationship as ambiguous."
+}

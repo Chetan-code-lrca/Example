@@ -1,0 +1,9 @@
+{
+  "id": "F06",
+  "files": [
+    "tests/fixtures/F06/.python-version",
+    "tests/fixtures/F06/pyproject.toml"
+  ],
+  "expected": "CONFLICT",
+  "note": "The local Python selection 3.10 is outside the project requires-python >=3.12 constraint."
+}

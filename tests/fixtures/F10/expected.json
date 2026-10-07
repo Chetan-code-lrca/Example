@@ -1,0 +1,9 @@
+{
+  "id": "F10",
+  "files": [
+    "tests/fixtures/F10/.nvmrc",
+    "tests/fixtures/F10/.node-version"
+  ],
+  "expected": "CONFLICT",
+  "note": "Both are authoritative local Node selectors in the same repository/local-development scope, and selected versions 20 and 22 are mutually incompatible."
+}

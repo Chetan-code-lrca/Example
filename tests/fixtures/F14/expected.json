@@ -1,0 +1,9 @@
+{
+  "id": "F14",
+  "files": [
+    "tests/fixtures/F14/.nvmrc",
+    "tests/fixtures/F14/package.json"
+  ],
+  "expected": "NO_CONFLICT",
+  "note": "Node 20.11.1 is within the ~20.11.0 range, so the two declarations are compatible."
+}

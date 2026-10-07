@@ -1,0 +1,9 @@
+{
+  "id": "F15",
+  "files": [
+    "tests/fixtures/F15/README.md",
+    "tests/fixtures/F15/package.json"
+  ],
+  "expected": "NO_CONFLICT",
+  "note": "README prose is informational under v1.3 Section 4.2 and does not create a conflict by itself; only the package.json declaration is authoritative here."
+}

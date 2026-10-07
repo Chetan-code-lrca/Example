@@ -1,0 +1,9 @@
+{
+  "id": "F01",
+  "files": [
+    "tests/fixtures/F01/.nvmrc",
+    "tests/fixtures/F01/package.json"
+  ],
+  "expected": "CONFLICT",
+  "note": "Two authoritative Node declarations apply to the same local project scope; selected Node 20 is outside engines.node >=22."
+}

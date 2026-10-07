@@ -1,0 +1,9 @@
+{
+  "id": "F03",
+  "files": [
+    "tests/fixtures/F03/.nvmrc",
+    "tests/fixtures/F03/package.json"
+  ],
+  "expected": "NO_CONFLICT",
+  "note": "Node 20 is included by the ^20 alternative."
+}

@@ -1,0 +1,9 @@
+{
+  "id": "F11",
+  "files": [
+    "tests/fixtures/F11/.github/workflows/ci.yml",
+    "tests/fixtures/F11/package.json"
+  ],
+  "expected": "CI_ENGINE_CONFLICT",
+  "note": "A7 makes matrix legs separate CI scopes and explicitly states that engines.node >=20 versus CI Node 18 is a conflict; the repository therefore has the CI_ENGINE_CONFLICT subtype."
+}

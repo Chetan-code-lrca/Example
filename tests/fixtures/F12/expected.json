@@ -1,0 +1,8 @@
+{
+  "id": "F12",
+  "files": [
+    "tests/fixtures/F12/package.json"
+  ],
+  "expected": "EXCLUDED_FROM_N_MULTI",
+  "note": "A6 defines N_multi as requiring at least two comparable authoritative declarations for one runtime family and scope; a single declaration cannot enter N_multi."
+}

@@ -1,0 +1,9 @@
+{
+  "id": "F04",
+  "files": [
+    "tests/fixtures/F04/.nvmrc",
+    "tests/fixtures/F04/package.json"
+  ],
+  "expected": "CONFLICT",
+  "note": "Node 22 is outside both declared ^18 and ^20 ranges."
+}

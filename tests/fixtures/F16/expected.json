@@ -1,0 +1,8 @@
+{
+  "id": "F16",
+  "files": [
+    "tests/fixtures/F16/pyproject.toml"
+  ],
+  "expected": "NO_CONFLICT",
+  "note": "Python classifiers are informational under v1.3 Section 4.2; requires-python is the authoritative project constraint. No second authoritative declaration is present."
+}

@@ -1,0 +1,9 @@
+{
+  "id": "F02",
+  "files": [
+    "tests/fixtures/F02/.nvmrc",
+    "tests/fixtures/F02/package.json"
+  ],
+  "expected": "NO_CONFLICT",
+  "note": "Node 20 satisfies the package constraint >=18 <22."
+}

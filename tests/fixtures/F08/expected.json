@@ -1,0 +1,9 @@
+{
+  "id": "F08",
+  "files": [
+    "tests/fixtures/F08/.nvmrc",
+    "tests/fixtures/F08/package.json"
+  ],
+  "expected": "NOT_COMPARABLE",
+  "note": "Both declarations are authoritative, but lts/* is a moving alias; v1.3 explicitly permits classifying moving values as non-comparable rather than converting them into a false conflict."
+}

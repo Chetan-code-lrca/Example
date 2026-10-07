@@ -1,0 +1,9 @@
+{
+  "id": "F07",
+  "files": [
+    "tests/fixtures/F07/.python-version",
+    "tests/fixtures/F07/pyproject.toml"
+  ],
+  "expected": "NO_CONFLICT",
+  "note": "Python 3.12 satisfies the project constraint >=3.11,<3.13."
+}

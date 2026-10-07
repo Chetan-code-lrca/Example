@@ -1,0 +1,9 @@
+{
+  "id": "F09",
+  "files": [
+    "tests/fixtures/F09/Dockerfile",
+    "tests/fixtures/F09/package.json"
+  ],
+  "expected": "NOT_COMPARABLE",
+  "note": "Dockerfile FROM is authoritative for container scope, but node:latest is an unversioned moving tag; v1.3 explicitly permits non-comparable classification."
+}

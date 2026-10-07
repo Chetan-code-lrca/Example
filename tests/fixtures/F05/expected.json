@@ -1,0 +1,9 @@
+{
+  "id": "F05",
+  "files": [
+    "tests/fixtures/F05/.tool-versions",
+    "tests/fixtures/F05/package.json"
+  ],
+  "expected": "CONFLICT",
+  "note": "Both are authoritative local/project declarations for Node; selected Node 18 is outside >=20."
+}
