@@ -570,3 +570,311 @@ protocol/
 **[OPINION]** No primary-analysis criterion in this document may be changed after the first repository is inspected.
 
 **[OPINION]** Any proposed change must be recorded in `deviations.md`, dated, justified, and excluded from the primary analysis unless it merely corrects a clerical/data-entry error without changing eligibility, classification, or outcome definitions.
+
+
+---
+# Version 1.1 amendment — pre-data
+
+**Protocol version:** 1.1  
+**Amendment date:** 2026-10-07  
+**Status:** Pre-data; no repository from the study has been inspected.
+
+## A1. Decision-rule reconciliation
+
+**[FACT]** v1.0 required both `P_multi >= 5%` and `D >= 20`.
+
+**[FACT]** At `P_multi = 5%`, observing `D = 20` requires at least `N_multi = 400` because 5% of 400 is 20.
+
+**[OPINION]** This is mathematically consistent, but it means the previous minimum exposure of 150 comparable repositories was insufficient to make both thresholds attainable at the boundary prevalence.
+
+**[OPINION]** v1.1 therefore separates exposure sufficiency from the product decision:
+1. Continue sampling until `N_multi >= 150` unless the hard cap or seven-day time-box is reached.
+2. Do not stop merely when `N_multi = 150`.
+3. If `P_multi >= 5%` but `D < 20`, continue sampling while the cap permits.
+4. BUILD still requires `P_multi >= 5%` and `D >= 20` plus low existing-tool coverage.
+5. At exactly 5% prevalence, BUILD cannot occur before approximately `N_multi = 400`.
+6. At `N_multi = 150`, BUILD requires at least 20 conflicts, or 13.34% prevalence.
+7. This is intentional: the study requires both prevalence and replication across distinct repositories.
+
+**[OPINION]** `D >= 20` is a replication requirement, not a prevalence substitute.
+
+## A2. Sequential sampling and cap
+
+**[OPINION]** Replace the fixed 400-repository target with sequential sampling.
+
+- Minimum comparable-declaration exposure: `N_multi >= 150`.
+- Hard cap: `N_all <= 1000` sampled repositories.
+- Continue sampling after 150 when needed to resolve the preregistered decision.
+- Stop at the earliest point at which:
+  - a STOP condition is mathematically irreversible under the remaining cap;
+  - all BUILD conditions are satisfied;
+  - `N_all = 1000`;
+  - seven calendar days have elapsed.
+- If the cap/time-box is reached without BUILD, apply the final STOP/PIVOT rules below.
+
+**[OPINION]** This avoids declaring low prevalence merely because the first 150 comparable repositories contain few conflicts.
+
+## A3. Exhaustive final decision rules
+
+**[OPINION]** Apply exactly one outcome in this order.
+
+### STOP
+
+STOP the standalone CLI if either:
+
+`
+N_multi < 150
+AND
+the 1000-repository cap or seven-day time-box was reached
+
+OR
+
+N_multi >= 150
+AND
+P_multi < 2%
+`
+
+### BUILD
+
+BUILD the CLI prototype only if all are true:
+
+`
+N_multi >= 150
+AND
+P_multi >= 5%
+AND
+D >= 20
+AND
+ToolCoverage < 50%
+`
+
+### PIVOT
+
+PIVOT to a measurement study plus small static linter in every remaining case.
+
+**[OPINION]** STOP, BUILD, and PIVOT are exhaustive and non-overlapping because STOP is evaluated first, BUILD second, and PIVOT is the complement.
+
+**[OPINION]** The interval `2% <= P_multi < 5%` is deliberately a pivot zone. The 5% threshold is an engineering/product threshold, not a claim of statistical significance.
+
+## A4. GitHub search pools and the 1,000-result ceiling
+
+**[FACT]** GitHub documents repository search by star ranges and the `pushed` qualifier. citeturn0search1turn0search3
+
+**[OPINION]** Never freeze a candidate pool by taking the first 1,000 results of an over-cap query.
+
+For each language:
+
+1. Start with the fixed v1.0 star bands.
+2. Add `fork:false`, `archived:false`, and `pushed:>=YYYY-MM-DD`, where the date is exactly 12 months before pool freeze.
+3. If a query returns fewer than 1,000 results, freeze that result set.
+4. If it reaches the search ceiling, split its integer star interval into two non-overlapping ranges and query both.
+5. Recursively split any range that still reaches the ceiling.
+6. Deduplicate by canonical `owner/name`.
+7. Record every leaf query, timestamp, result count, and split boundary.
+
+**[OPINION]** Split boundaries are determined only by the search ceiling, never by runtime declarations or conflict status. This prevents declaration-dependent sampling.
+
+**[OPINION]** If a single integer star value itself remains over the ceiling and the chosen GitHub search interface provides no deterministic secondary partition, that star value is recorded as an unresolvable stratum and excluded rather than truncated.
+
+## A5. Activity filter
+
+**[FACT]** GitHub documents `pushed` as the qualifier for repositories updated by a push after a specified date. citeturn0search1
+
+**[OPINION]** Eligibility requires:
+`
+public
+fork:false
+archived:false
+pushed_at >= pool_freeze_date - 12 months
+`
+
+Record the exact `pushed_at` value returned at pool freeze.
+
+## A6. Revised N_multi
+
+**[OPINION]** `N_multi` is the number of sampled repositories containing two or more authoritative runtime declarations for the same runtime family **within a comparable execution scope**.
+
+Examples:
+- `.nvmrc` + `package.json engines.node` for the same local project scope: comparable.
+- `.python-version` + `pyproject.toml requires-python` for the same Python project scope: comparable.
+- Production Docker Node 22 + local-development `.nvmrc` Node 20: not comparable merely because both are in one repository.
+- Root and child declarations are comparable only when repository semantics establish that they govern the same execution scope.
+
+**[OPINION]** A repository enters `N_multi` once if at least one runtime family/scope contains 2+ comparable authoritative declarations.
+
+## A7. CI matrix legs versus engines
+
+**[OPINION]** A GitHub Actions matrix creates separate CI execution scopes.
+
+Example:
+`
+strategy:
+  matrix:
+    node: [18, 20, 22]
+steps:
+  - uses: actions/setup-node
+    with:
+      node-version: ${{ matrix.node }}
+`
+
+This is three CI runtime selections, not a single declaration.
+
+**[OPINION]** Compare a root `package.json engines.node` constraint against each CI leg only when that job executes the same project/package scope.
+
+Rules:
+1. Each matrix leg is a separate CI scope.
+2. A matrix containing 18, 20, and 22 is not itself a conflict.
+3. `engines.node >=20` versus CI Node 18 is a conflict for that scope.
+4. `engines.node >=20` versus CI Node 20 or 22 is not a conflict.
+5. Explicit expected-failure/compatibility-test legs are not conflicts when that status is machine-readable.
+6. If expected-failure semantics cannot be established, classify as ambiguous.
+
+## A8. Second existing-tool metric
+
+**[OPINION]** Add `OwnMachineFailureCoverage`:
+
+`
+conflicting repositories where an applicable tool surfaces
+the same conflict as an error/failure in the project's own
+machine context
+/
+tested conflicting repositories
+`
+
+**[OPINION]** A failure means a non-success exit status or explicitly documented error/failure result identifying the relevant runtime incompatibility. A warning alone does not count.
+
+Report both:
+- `ToolCoverage`: any qualifying user-visible detection.
+- `OwnMachineFailureCoverage`: qualifying detection surfaced as failure/error in the project's own machine context.
+
+**[OPINION]** BUILD uses `ToolCoverage`; the second metric is a secondary user-impact measure.
+
+## A9. Exact PRNG and library
+
+**[FACT]** Python's `random.Random` uses Mersenne Twister, and `random.sample` samples without replacement. citeturn0search4turn0search6
+
+**[OPINION]** Primary sampling environment:
+`
+Python 3.12.15
+stdlib random.Random
+PRNG core: MT19937 / Mersenne Twister
+seed: 20261007
+sampling: Random.sample(population, k)
+`
+
+Sort candidates by canonical `owner/name` before sampling. Record the exact interpreter version. Use one documented deterministic seed-derivation method for strata and commit it before sampling.
+
+## A10. Ten-percent second-rater check
+
+**[OPINION]** A second independent rater reviews 10% of sampled repositories, rounded up, with a minimum of 20 repositories.
+
+The second rater independently records declarations, comparable scope, `N_multi` eligibility, conflict classification, harm evidence, and applicable tool detection.
+
+The primary rater's labels remain hidden until the independent record is complete.
+
+Report agreement separately for:
+`
+N_multi eligibility
+conflict classification
+harm classification
+tool detection
+`
+
+Disagreements are documented and adjudicated using the frozen definitions.
+
+## A11. Same-runtime harm requirement
+
+**[OPINION]** Harm evidence counts only when the issue, PR, or CI failure concerns the **same runtime family and comparable execution scope** as the observed conflict.
+
+Node conflict + Node-version failure: qualifying.  
+Python conflict + unrelated Java failure: non-qualifying.  
+Node conflict + generic dependency failure without a Node-version connection: non-qualifying.
+
+The existing 24-month harm-search window remains unchanged.
+
+## A12. Verified and unverified tool claims
+
+**[FACT]** `check-engine` says it uses the `engines` object in `package.json` to validate installed tools and supports Node.js, npm, Yarn, and pnpm among other tools. citeturn0search0
+
+**[FACT]** `check-engines` says it verifies engine versions against semver constraints in `package.json`. citeturn0search8
+
+**[FACT]** npm's `npm-install-checks` exposes checks for `engines.node`, `engines.npm`, platform fields, and `devEngines`, with engine failures represented as errors. citeturn0search5turn0search12
+
+**[FACT]** `npm-check-engines` describes checking whether dependencies support the project's supported engine range. citeturn0search10
+
+**[FACT]** mise's current documentation recommends `mise doctor` for checking a mise setup. citeturn0search2
+
+**[FACT]** Current mise documentation distinguishes ordinary `mise doctor` diagnostics from configurable project checks; ordinary `mise doctor` does not automatically run project checks. citeturn0search14
+
+**[UNVERIFIED]** Do not claim that any of these tools detect cross-file declaration conflicts until the study runs the empirical detection test in A8.
+
+## A13. Section 16 correction
+
+**[FACT]** v1.0 contained malformed backticks in the expected-deliverable block.
+
+**[OPINION]** The corrected block is:
+`
+data/
+  repositories.csv
+  declarations.csv
+  conflicts.csv
+  harm.csv
+  tool_coverage.csv
+
+analysis/
+  prevalence.md
+  prevalence.json
+  wilson_intervals.json
+
+protocol/
+  PREREGISTRATION.md
+  deviations.md
+`
+
+The final report must state:
+`
+N_all
+N_multi
+C
+D
+P_all
+P_multi
+95% Wilson intervals
+harm proportion H
+ToolCoverage
+OwnMachineFailureCoverage
+final STOP/PIVOT/BUILD result
+protocol deviations
+`
+
+## A14. Diff-style changelog
+
+**[FACT]** v1.1 is a pre-data amendment.
+
+```diff
+- fixed 400-repository target
++ sequential sampling until N_multi >= 150, with N_all <= 1000 cap
+
+- treated N_multi < 100 as a standalone STOP trigger
++ require N_multi >= 150 unless cap/time-box prevents it
+
++ explicitly reconcile P_multi >= 5% with D >= 20
++ at 5% prevalence, D >= 20 requires N_multi >= 400
+
++ add pushed-within-12-months eligibility filter
++ add recursive star-range slicing for over-cap GitHub search queries
++ redefine N_multi as 2+ comparable authoritative declarations in one scope
++ define CI matrix legs as separate execution scopes
++ add OwnMachineFailureCoverage
++ pin Python 3.12.15 stdlib random.Random / Mersenne Twister
++ add second-rater review of 10% of sampled repositories, minimum 20
++ require harm evidence to concern the same runtime family and scope
++ repair Section 16 backticks
++ mark cross-file detection claims UNVERIFIED until empirically tested
+`
+
+## A15. Amendment freeze
+
+**[OPINION]** v1.1 is frozen before data collection. After the first repository is inspected, no primary eligibility, sampling, classification, harm, tool-detection, or decision criterion may be changed.
+
+**[OPINION]** Any substantive later change must be recorded as a protocol deviation and excluded from the primary analysis.
