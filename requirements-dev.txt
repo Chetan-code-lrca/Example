@@ -1,0 +1,2 @@
+# Fixture/extraction tests
+PyYAML==6.0.3
